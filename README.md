@@ -1,2 +1,2 @@
 # Rest-API
-Django Rest aPI
+Django Rest API
