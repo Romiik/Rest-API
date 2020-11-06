@@ -1,24 +1,24 @@
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
-from rest_framework.parsers import JSONParser
 from .models import Trainer, Pokemon
 from .serializers import TrainerSerializer, PokemonSerializer
+from rest_framework.views import APIView
+from rest_framework import generics, mixins
+from rest_framework.authentication import TokenAuthentication, SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets
 
-# Create your views here.
+
+class TrainerViewSet(viewsets.ModelViewSet):
+
+    serializer_class = TrainerSerializer
+    queryset = Trainer.objects.all()
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    #authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
 
-def train_list(request):
-
-    if request.method == 'GET':
-        trainers = Trainer.objects.all()
-        serializer = TrainerSerializer(trainers, many=True)
-        return JsonResponse(serializer.data, safe=False)
-
-    elif request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = TrainerSerializer(data=data)
-
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data, status=201)
-         return JsonResponse(serializer.errors, status=400)
+class PokemonViewSet(viewsets.ModelViewSet):
+    serializer_class = PokemonSerializer
+    queryset = Pokemon.objects.all()
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
